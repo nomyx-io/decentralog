@@ -1,0 +1,23 @@
+{
+  "name": "@nomyx/decentralog",
+  "private": true,
+  "version": "0.0.1",
+  "description": "A decentralized event indexer for EVM blockchains",
+  "author": "Sebastian Schepis",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc",
+    "publish": "npm publish --access public"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2",
+    "vite": "^5.0.8"
+  },
+  "dependencies": {
+    "gun": "^0.2020.1239",
+    "web3": "^4.3.0"
+  }
+}
