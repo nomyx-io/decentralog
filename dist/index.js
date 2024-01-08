@@ -144,7 +144,3 @@ class GunJSBDIndexer {
     ;
 }
 exports.GunJSBDIndexer = GunJSBDIndexer;
-module.exports = {
-    AbiSyncer,
-    GunJSBDIndexer
-};

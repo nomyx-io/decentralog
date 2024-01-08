@@ -152,8 +152,3 @@ export class GunJSBDIndexer {
     return db;
   };
 }
-
-module.exports = {
-    AbiSyncer,
-    GunJSBDIndexer
-};
