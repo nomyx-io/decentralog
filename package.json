@@ -1,6 +1,6 @@
 {
   "name": "@nomyx/decentralog",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A decentralized event indexer for EVM blockchains",
   "author": "Sebastian Schepis",
   "license": "MIT",
