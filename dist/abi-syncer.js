@@ -2,13 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const web3_1 = require("web3");
 class AbiSyncer {
-    provider;
-    name;
-    abi;
-    address;
-    updater;
-    web3;
-    contract;
     constructor(provider, name, abi, address, updater) {
         this.provider = provider;
         this.name = name;
@@ -78,4 +71,6 @@ class AbiSyncer {
         return this.updater.subscribe(topic, callback);
     }
 }
-exports.default = AbiSyncer;
+module.exports = {
+    default: AbiSyncer,
+};

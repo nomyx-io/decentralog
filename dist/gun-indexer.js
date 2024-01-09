@@ -7,8 +7,6 @@ require("gun/lib/radisk");
 require("gun/lib/store");
 require("gun/lib/rindexed");
 class GunJSBDIndexer {
-    gun;
-    syncer;
     constructor() {
         this.gun = (0, gun_1.default)();
         this.onAddTopic = this.onAddTopic.bind(this);
@@ -62,4 +60,6 @@ class GunJSBDIndexer {
     }
     ;
 }
-exports.default = GunJSBDIndexer;
+module.exports = {
+    default: GunJSBDIndexer,
+};
