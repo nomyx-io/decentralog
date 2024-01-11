@@ -5,53 +5,79 @@ import AbiSyncer from "./abi-syncer";
 
 import "./indexer.css";
 
-export default function DecentralizedIndexer({ root, provider, contracts, debug, onSync}: any) {
+export default function DecentralizedIndexer({
+    root,
+    provider,
+    contracts,
+    debug,
+    onSync
+}: any) {
     function log(...s: any) {
-        debug && console.log(`DecentralizedIndexer:${s}`)
+        debug && console.log(`DecentralizedIndexer:${s}`);
     }
-    const [syncers, setSyncers] = useState([] as any);
+    const [syncers, setSyncers] = useState({} as any);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const [events, setEvents] = useState([] as any);
+    const [rootNode] = useState(root || Math.random().toString(36).substring(7));
+    const [gun] = useState(GUN().get(rootNode));
+    const [error, setError] = useState(undefined as any);
     // Initialize syncers
     useEffect(() => {
-        if(!provider || !contracts || !syncers) return;
-        
-        const gun = GUN().get(root);
-        const web3 = new Web3(provider);
+        let isMounted = true;
+
         const initializeSyncers = async () => {
-            log('initializeSyncers')
+            if (!provider || !contracts) return;
+            setLoading(true);
+            const abiSyncers: any = [];
             try {
-                setLoading(true);
-                const initializedSyncers = await Promise.all(
-                    Object.entries(contracts).map(async ([name, contract]: any) => {
-                        if (!contract.abi || !contract.address) return null;
-                        const abiSyncer = new AbiSyncer(web3, provider, gun, name, contract.abi, contract.address, debug === true, (event: any, live: any) => {
-                          if(!event) return;
-                          event.abiSyncer = abiSyncer;
-                          onSync&&onSync(event, live);
-                          log('onSync', event);
-                          setEvents([...events, event]);
-                        });
-                        await abiSyncer.sync();
-                        return { name, abiSyncer };
-                    })
-                );
-                setSyncers(initializedSyncers.filter(syncer => syncer));
-            } catch (e: any) {
-                setError(e);
-            } finally {
-                setLoading(false);
+                log("initializeSyncers", syncers);
+                Object.entries(contracts).forEach(([name, contract]: any) => {
+                    if (syncers[name]) return;
+                    const abiSyncer = new AbiSyncer(
+                        new Web3(provider),
+                        provider,
+                        gun,
+                        name,
+                        contract.abi,
+                        contract.address,
+                        debug === true,
+                        async (_events: any, live: boolean) => {
+                            if (!isMounted || !_events) return;
+                            log("onSync", JSON.stringify(_events));
+                            onSync && (await onSync(_events, live));
+                            setEvents((prevEvents: any) => [...prevEvents, ..._events]);
+                        }
+                    );
+                    abiSyncers.push(abiSyncer.sync());
+                    setError(undefined);
+                });
+            } catch (e) {
+                setError(e.message);
             }
-        }
+            await Promise.all(abiSyncers).then((initializedSyncers) => {
+                if (isMounted) {
+                    setSyncers((prevSyncers: any) => [...prevSyncers, ...initializedSyncers]);
+                    setLoading(false);
+                }
+            });
+        };
+
         initializeSyncers();
-    }, [contracts, provider, root, onSync]);
-  
+
+        return () => {
+            isMounted = false;
+        };
+    }, [provider, JSON.stringify(contracts)]); 
+
+    events.forEach((event: any, i: number) => {
+        if (!event.name) event.name = "event " + i;
+    });
+
     return (
         <div>
             {loading && <p>Loading...</p>}
             {error && <p>Error: {error}</p>}
-            {debug && <>
+            {debug && syncers && events && <>
                 <table className="table">
                     <thead>
                         <tr>
@@ -60,11 +86,11 @@ export default function DecentralizedIndexer({ root, provider, contracts, debug,
                         </tr>
                     </thead>
                     <tbody>
-                        {syncers.map((syncer: any) => (
-                        <tr key={syncer.name}>
-                            <td>{syncer.name}</td>
-                            <td>{syncer.abiSyncer.address}</td>
-                        </tr>
+                        {syncers && syncers.map && syncers.map((syncer: any) => (
+                            <tr key={syncer.name}>
+                                <td>{syncer.name}</td>
+                                <td>{syncer.abiSyncer.address}</td>
+                            </tr>
                         ))}
                     </tbody>
                 </table>
@@ -76,16 +102,16 @@ export default function DecentralizedIndexer({ root, provider, contracts, debug,
                         </tr>
                     </thead>
                     <tbody>
-                        {events.map((event: any) => (
-                        <tr key={event.name}>
-                            <td>{event.name}</td>
-                            <td>{event.address}</td>
-                        </tr>
+                        {events && events.map((event: any) => (
+                            <tr key={event.name}>
+                                <td>{event.name}</td>
+                                <td>{event.address}</td>
+                            </tr>
                         ))}
                     </tbody>
                 </table>
             </>
-        }
+            }
         </div>
     );
-  }
+}

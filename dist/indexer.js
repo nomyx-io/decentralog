@@ -1,27 +1,3 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -67,16 +43,12 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     }
     return to.concat(ar || Array.prototype.slice.call(from));
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var react_1 = __importStar(require("react"));
-var web3_1 = __importDefault(require("web3"));
-var gun_1 = __importDefault(require("gun"));
-var abi_syncer_1 = __importDefault(require("./abi-syncer"));
-require("./indexer.css");
-function DecentralizedIndexer(_a) {
+import React, { useEffect, useState } from "react";
+import Web3 from "web3";
+import GUN from 'gun';
+import AbiSyncer from "./abi-syncer";
+import "./indexer.css";
+export default function DecentralizedIndexer(_a) {
     var _this = this;
     var root = _a.root, provider = _a.provider, contracts = _a.contracts, debug = _a.debug, onSync = _a.onSync;
     function log() {
@@ -86,91 +58,101 @@ function DecentralizedIndexer(_a) {
         }
         debug && console.log("DecentralizedIndexer:".concat(s));
     }
-    var _b = (0, react_1.useState)([]), syncers = _b[0], setSyncers = _b[1];
-    var _c = (0, react_1.useState)(true), loading = _c[0], setLoading = _c[1];
-    var _d = (0, react_1.useState)(null), error = _d[0], setError = _d[1];
-    var _e = (0, react_1.useState)([]), events = _e[0], setEvents = _e[1];
+    var _b = useState({}), syncers = _b[0], setSyncers = _b[1];
+    var _c = useState(true), loading = _c[0], setLoading = _c[1];
+    var _d = useState([]), events = _d[0], setEvents = _d[1];
+    var rootNode = useState(root || Math.random().toString(36).substring(7))[0];
+    var gun = useState(GUN().get(rootNode))[0];
+    var _e = useState(undefined), error = _e[0], setError = _e[1];
     // Initialize syncers
-    (0, react_1.useEffect)(function () {
-        if (!provider || !contracts || !syncers)
-            return;
-        var gun = (0, gun_1.default)().get(root);
-        var web3 = new web3_1.default(provider);
+    useEffect(function () {
+        var isMounted = true;
         var initializeSyncers = function () { return __awaiter(_this, void 0, void 0, function () {
-            var initializedSyncers, e_1;
+            var abiSyncers;
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        log('initializeSyncers');
-                        _a.label = 1;
-                    case 1:
-                        _a.trys.push([1, 3, 4, 5]);
+                        if (!provider || !contracts)
+                            return [2 /*return*/];
                         setLoading(true);
-                        return [4 /*yield*/, Promise.all(Object.entries(contracts).map(function (_a) {
+                        abiSyncers = [];
+                        try {
+                            log("initializeSyncers", syncers);
+                            Object.entries(contracts).forEach(function (_a) {
                                 var name = _a[0], contract = _a[1];
-                                return __awaiter(_this, void 0, void 0, function () {
-                                    var abiSyncer;
+                                if (syncers[name])
+                                    return;
+                                var abiSyncer = new AbiSyncer(new Web3(provider), provider, gun, name, contract.abi, contract.address, debug === true, function (_events, live) { return __awaiter(_this, void 0, void 0, function () {
+                                    var _a;
                                     return __generator(this, function (_b) {
                                         switch (_b.label) {
                                             case 0:
-                                                if (!contract.abi || !contract.address)
-                                                    return [2 /*return*/, null];
-                                                abiSyncer = new abi_syncer_1.default(web3, provider, gun, name, contract.abi, contract.address, debug === true, function (event, live) {
-                                                    if (!event)
-                                                        return;
-                                                    event.abiSyncer = abiSyncer;
-                                                    onSync && onSync(event, live);
-                                                    log('onSync', event);
-                                                    setEvents(__spreadArray(__spreadArray([], events, true), [event], false));
-                                                });
-                                                return [4 /*yield*/, abiSyncer.sync()];
+                                                if (!isMounted || !_events)
+                                                    return [2 /*return*/];
+                                                log("onSync", JSON.stringify(_events));
+                                                _a = onSync;
+                                                if (!_a) return [3 /*break*/, 2];
+                                                return [4 /*yield*/, onSync(_events, live)];
                                             case 1:
-                                                _b.sent();
-                                                return [2 /*return*/, { name: name, abiSyncer: abiSyncer }];
+                                                _a = (_b.sent());
+                                                _b.label = 2;
+                                            case 2:
+                                                _a;
+                                                setEvents(function (prevEvents) { return __spreadArray(__spreadArray([], prevEvents, true), _events, true); });
+                                                return [2 /*return*/];
                                         }
                                     });
-                                });
-                            }))];
-                    case 2:
-                        initializedSyncers = _a.sent();
-                        setSyncers(initializedSyncers.filter(function (syncer) { return syncer; }));
-                        return [3 /*break*/, 5];
-                    case 3:
-                        e_1 = _a.sent();
-                        setError(e_1);
-                        return [3 /*break*/, 5];
-                    case 4:
-                        setLoading(false);
-                        return [7 /*endfinally*/];
-                    case 5: return [2 /*return*/];
+                                }); });
+                                abiSyncers.push(abiSyncer.sync());
+                                setError(undefined);
+                            });
+                        }
+                        catch (e) {
+                            setError(e.message);
+                        }
+                        return [4 /*yield*/, Promise.all(abiSyncers).then(function (initializedSyncers) {
+                                if (isMounted) {
+                                    setSyncers(function (prevSyncers) { return __spreadArray(__spreadArray([], prevSyncers, true), initializedSyncers, true); });
+                                    setLoading(false);
+                                }
+                            })];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
                 }
             });
         }); };
         initializeSyncers();
-    }, [contracts, provider, root, onSync]);
-    return (react_1.default.createElement("div", null,
-        loading && react_1.default.createElement("p", null, "Loading..."),
-        error && react_1.default.createElement("p", null,
+        return function () {
+            isMounted = false;
+        };
+    }, [provider, JSON.stringify(contracts)]);
+    events.forEach(function (event, i) {
+        if (!event.name)
+            event.name = "event " + i;
+    });
+    return (React.createElement("div", null,
+        loading && React.createElement("p", null, "Loading..."),
+        error && React.createElement("p", null,
             "Error: ",
             error),
-        debug && react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement("table", { className: "table" },
-                react_1.default.createElement("thead", null,
-                    react_1.default.createElement("tr", null,
-                        react_1.default.createElement("th", null, "Contract"),
-                        react_1.default.createElement("th", null, "Address"))),
-                react_1.default.createElement("tbody", null, syncers.map(function (syncer) { return (react_1.default.createElement("tr", { key: syncer.name },
-                    react_1.default.createElement("td", null, syncer.name),
-                    react_1.default.createElement("td", null, syncer.abiSyncer.address))); }))),
-            react_1.default.createElement("table", { className: "table" },
-                react_1.default.createElement("thead", null,
-                    react_1.default.createElement("tr", null,
-                        react_1.default.createElement("th", null, "Event"),
-                        react_1.default.createElement("th", null, "Address"))),
-                react_1.default.createElement("tbody", null, events.map(function (event) { return (react_1.default.createElement("tr", { key: event.name },
-                    react_1.default.createElement("td", null, event.name),
-                    react_1.default.createElement("td", null, event.address))); }))))));
+        debug && syncers && events && React.createElement(React.Fragment, null,
+            React.createElement("table", { className: "table" },
+                React.createElement("thead", null,
+                    React.createElement("tr", null,
+                        React.createElement("th", null, "Contract"),
+                        React.createElement("th", null, "Address"))),
+                React.createElement("tbody", null, syncers && syncers.map && syncers.map(function (syncer) { return (React.createElement("tr", { key: syncer.name },
+                    React.createElement("td", null, syncer.name),
+                    React.createElement("td", null, syncer.abiSyncer.address))); }))),
+            React.createElement("table", { className: "table" },
+                React.createElement("thead", null,
+                    React.createElement("tr", null,
+                        React.createElement("th", null, "Event"),
+                        React.createElement("th", null, "Address"))),
+                React.createElement("tbody", null, events && events.map(function (event) { return (React.createElement("tr", { key: event.name },
+                    React.createElement("td", null, event.name),
+                    React.createElement("td", null, event.address))); }))))));
 }
-exports.default = DecentralizedIndexer;
 //# sourceMappingURL=indexer.js.map
