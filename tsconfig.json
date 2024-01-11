@@ -1,9 +1,18 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
+    "jsx": "react",
+    "target": "es5",
+    "lib": ["es6", "dom"],
     "module": "commonjs",
-    "lib": ["ES2020"],
-    "outDir": "dist",
+    "allowJs": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noImplicitReturns": true,
     "skipLibCheck": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
@@ -11,7 +20,8 @@
     "strict": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "esModuleInterop": true
   },
   "include": ["src"]
 }

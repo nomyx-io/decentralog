@@ -1,0 +1,65 @@
+/* DecentralizedIndexer.css */
+.DecentralizedIndexer {
+    font-family: 'Arial', sans-serif;
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #f7f7f7;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  
+  .DecentralizedIndexer p {
+    color: #333;
+    line-height: 1.5;
+  }
+  
+  .DecentralizedIndexer .table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+  }
+  
+  .DecentralizedIndexer .table,
+  .DecentralizedIndexer .table th,
+  .DecentralizedIndexer .table td {
+    border: 1px solid #ddd;
+  }
+  
+  .DecentralizedIndexer .table th,
+  .DecentralizedIndexer .table td {
+    text-align: left;
+    padding: 8px;
+  }
+  
+  .DecentralizedIndexer .table th {
+    background-color: #fafafa;
+    color: #333;
+  }
+  
+  .DecentralizedIndexer .table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  .DecentralizedIndexer .table tbody tr:hover {
+    background-color: #eaeaea;
+  }
+  
+  /* Loading and Error messages */
+  .DecentralizedIndexer .loading,
+  .DecentralizedIndexer .error {
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 4px;
+    text-align: center;
+  }
+  
+  .DecentralizedIndexer .loading {
+    background-color: #e0eaff;
+    color: #0056b3;
+  }
+  
+  .DecentralizedIndexer .error {
+    background-color: #ffebeb;
+    color: #d32f2f;
+  }
