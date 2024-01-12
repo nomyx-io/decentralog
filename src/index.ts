@@ -1,6 +1,6 @@
-import AbiSyncer from "./AbiSyncer";
-import DecentralizedIndexer from "./DecentralizedIndexer";
-import DecentralizedIndexingService from "./DecentralizedIndexingService";
-import Web3Button from "./Web3Button";
+const AbiSyncer = require("./AbiSyncer");
+const DecentralizedIndexer = require("./DecentralizedIndexer");
+const DecentralizedIndexingService = require("./DecentralizedIndexingService");
+const Web3Button = require("./Web3Button");
 export { AbiSyncer, Web3Button, DecentralizedIndexer, DecentralizedIndexingService };
 export default DecentralizedIndexer

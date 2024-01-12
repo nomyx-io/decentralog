@@ -1,7 +1,7 @@
-import AbiSyncer from "./AbiSyncer";
-import DecentralizedIndexer from "./DecentralizedIndexer";
-import DecentralizedIndexingService from "./DecentralizedIndexingService";
-import Web3Button from "./Web3Button";
+var AbiSyncer = require("./AbiSyncer");
+var DecentralizedIndexer = require("./DecentralizedIndexer");
+var DecentralizedIndexingService = require("./DecentralizedIndexingService");
+var Web3Button = require("./Web3Button");
 export { AbiSyncer, Web3Button, DecentralizedIndexer, DecentralizedIndexingService };
 export default DecentralizedIndexer;
 //# sourceMappingURL=index.js.map
