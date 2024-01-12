@@ -1,5 +1,6 @@
-import AbiSyncer from "./abi-syncer";
-import DecentralizedIndexer from "./indexer";
-import Web3Button from "./web3-button";
-export { AbiSyncer, Web3Button };
+import AbiSyncer from "./AbiSyncer";
+import DecentralizedIndexer from "./DecentralizedIndexer";
+import DecentralizedIndexingService from "./DecentralizedIndexingService";
+import Web3Button from "./Web3Button";
+export { AbiSyncer, Web3Button, DecentralizedIndexer, DecentralizedIndexingService };
 export default DecentralizedIndexer

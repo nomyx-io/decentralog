@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Web3 from "web3";
 
-import "./web3-button.css";
+import "./Web3Button.css";
 
 // this is a 'connect with web3' button. it shows a button that when clicked, will connect to the user's web3 provider. The button takes a title, a callback, and style props and calls the callback with the connected web3 provider.
 // the callback should be a function that takes a web3 provider as an argument and returns a promise. the promise should resolve to an object with the following properties:
